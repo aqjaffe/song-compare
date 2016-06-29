@@ -1,33 +1,11 @@
 # AUTHOR: Adam Jaffe
-# UPDATED: 6.14.16
+# UPDATED: 6.29.16
 # ---------------------------------------------
 # This program is my first experiment in web-scraping!
 # It prompts the user for a song and artist and then collects
 # relevant chord data from www.ultimate-guitar.com to compile
 # a list of all of the user-generated chord sheets avaiable.
 # It transposes these all to the same key for easy comparison.
-#
-# The next step is to take all of these separate chord sheets
-# and combine them into one large Markov table (probably an iteration
-# of Python dictionaries) which will describe the patterns found
-# in the corpus. To ensure that the user-generated sheets are
-# accurate, each sheet will be weighted by its online rating.
-#
-# Once that step is complete, the next part of the project is
-# to come up with a comparison mechanism for two Markov tables.
-# The program will then be modified to take two song suggestions
-# from the user, and will compare their Markov tables to judge
-# how similar the songs are.
-#
-# Finally, if all of these steps are working fast and efficiently,
-# I will modify the program to take input of only a year. It will
-# scrape the Billbord Top 40 songs for that year and return a list
-# of the songs that are the most similar according to my model, i.e.
-# the songs in that year that are the best candidates for a mashup.
-
-### TODO: make this able to scroll through multiple pages of results
-
-### TODO: re-organize this page so that similar methods/fields are grouped together!
 
 import sys
 import requests
@@ -36,7 +14,7 @@ import Queue
 import re
 from BeautifulSoup import BeautifulSoup
 
-edit_date = "6.27.16"
+edit_date = "6.29.16"
 
 num_for_str = {'C':0, 'C#':1, 'Db':1, 'D':2, 'D#':3, 'Eb':3,
                 'E':4, 'F':5, 'F#':6, 'Gb':6, 'G':7, 'G#':8, 'Ab':8,
@@ -46,7 +24,6 @@ chords_in_key0 = {'0', '2m', '4m', '5', '7', '9m'}
 
 max_n = 4;
 
-# TODO: incorporate intro/outro sequecnes, i.e. progressions that include '-1'
 test_suite = {'Uniform Weights': [False, False, [0.20, 0.20, 0.20, 0.20, 0.20]],
               'Distribution of Chords': [False, False, [1.0, 0, 0, 0, 0]],
               '3-Chord Progressions': [False, False, [0, 0, 1.0, 0, 0]],
@@ -295,6 +272,7 @@ def simplify_str(text):
 
 #TODO: fix this part of the program
 # I accidentally broke it by updating to BeautifulSoup4
+# For now, I reverted back to bs3, but I need to figure out how to update eventually
 def get_chord_sheet_urls(title, artist):
     url = 'https://www.ultimate-guitar.com/search.php?search_type=title&order=&value=' + simplify_str(title).replace(' ', '+')
     response = requests.get(url)
@@ -442,6 +420,7 @@ def get_best_match(target_song, songs, num_results):
     return ranking
 
 # This function executes the program
+#TODO: decompose better, in general
 def main():
     print_intro()
     feature = get_feature()
