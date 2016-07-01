@@ -8,8 +8,7 @@ CURRENT BUGS:
 NEXT STEPS (in order of urgency and difficulty):
     -Add a test suite to run through GitHub, to make sure that the project is working correctly after each modification
     -Find better weights/specs for the tests to be run, which will involve much more musical knowledge
-    -Separate the long song-compare.py program into several .py files
-    -(Look into the song-compare.py code for more details on what to fix/add/update.)
+    -(Look into a few modules of code for more details on what to fix/add/update.)
 
 FUTURE PLANS:
     -Run code on a server to add songs into a database (MySQL or another for example) so that lookup can be done without accessing the internet
