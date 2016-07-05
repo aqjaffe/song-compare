@@ -13,3 +13,6 @@ NEXT STEPS (in order of urgency and difficulty):
 FUTURE PLANS:
     -Run code on a server to add songs into a database (MySQL or another for example) so that lookup can be done without accessing the internet
     -Run the song comparison algorithm(s) in a different language (most likely C++) and read from the database
+    
+resource for finding new string comparison methods:
+http://users.cecs.anu.edu.au/~Peter.Christen/publications/tr-cs-06-02.pdf
