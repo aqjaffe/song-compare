@@ -1,12 +1,14 @@
 # interface.py
-# ----------------------------------------------------
-# This module is for printing the song-compare program
-# to the console.
+# ---------------------
+# This file has all of the printing and aesthetic
+# parts of the program
+
 
 import sys
 import compare
+import song
 
-edit_date = "6.29.16"
+edit_date = "7.1.16"
 
 num_percent_digits = 5
 total_length = 48
@@ -54,34 +56,3 @@ def print_ranking(ranking):
     for i in range(len(ranking)):
         print '#' + str(i + 1) + '\t\"' + ranking[i][0] + '\" by ' + ranking[i][1] + ', and'
         print '\t\"' + ranking[i][2] + '\" by ' + ranking[i][3] + '\t' + str(ranking[i][4]) + '\n'
-
-def get_song_info():
-    title = raw_input("\tTitle: ")
-    artist = raw_input("\t\tArtist: ")
-    song_info = [title, artist]
-    return song_info
-
-def get_song_pair():
-    print_title('SONG RETRIEVAL')
-    print 'Song #1:',
-    song1 = make_song('','')
-    while song1[2] is None:
-        print 'Song could not be found in database, please try another'
-        print 'Song #1:',
-        song1 = make_song('','')
-    print '\nSong #2:',
-    song2 = make_song('','')
-    while song2[2] is None:
-        print 'Song could not be found in database, please try another'
-        print 'Song #2:',
-        song2 = make_song('','')
-    return [song1, song2]
-
-def get_feature():
-    print 'What feature would you like to run?'
-    print ' (1) Compare two songs of your choice'
-    print ' (2) Compare all songs by one artist'
-    print ' (3) Compare one song to the billboard top hits'
-    print ' (4) Compare all songs on the billboard top hits'
-    feature = raw_input('Enter a feature to run (or 0 to quit): ')
-    return int(feature)

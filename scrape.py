@@ -7,12 +7,15 @@ import requests
 import types
 import Queue
 import re
-from BeautifulSoup import BeautifulSoup
+import music
+from bs4 import BeautifulSoup
+import interface
+import song
 
 def get_chord_sheet(url):
     response = requests.get(url)
     html = response.content
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     data = soup.find('pre', attrs={'class':'js-tab-content'})
     chord_sheet = []
     for chord in data.findAll('span'):
@@ -34,37 +37,46 @@ def get_chord_sheet_urls(title_url, artist):
     url = 'https://www.ultimate-guitar.com/search.php?search_type=title&order=&value=' + title_url.replace(' ', '+')
     response = requests.get(url)
     html = response.content
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     chord_sheet_urls = []
-    search_results = soup.find('table', attrs={'class':'tresults'})
+    search_results = soup.find('table', {'class' : 'tresults'})
+    #print search_results.prettify()
     if search_results is None:
         return url_data
     collecting = False
     # TODO: make this read several pages, if necessary
     for row in search_results.findAll('tr'):
         cells = row.findAll('td')
-        # TODO: why doesn't this work for Geronimo by Sheppard?
-        # For some reason it only reads 2 'td' sections then stops, instead of reading all 4.
-        # Uncomment the below line to see what I mean:
         #print cells
-        if len(cells) != 4:
+        if len(cells) < 4:
             continue
-        if cells[0].text != '&nbsp;':
+        if cells[0].text != u'\xa0':
             if cells[0].text.strip().lower() == artist.lower():
                 collecting = True
             else:
                 collecting = False
-        if collecting == True and len(cells[2].contents) > 0 and cells[3].text == 'chords':
-            url = cells[1].a.get('href')
-            chord_sheet_urls.append(url)
+        if collecting == True and len(cells[2].contents) > 0 and cells[3].text == 'chords': # what does the cells[2] condition check???
+            url = cells[1].a.get('href')                                                    # the program crashes when I remove it, but
+            chord_sheet_urls.append(url)                                                    # I'm not sure why I wrote it in the first place
     return chord_sheet_urls
 
+def urls_to_sheets(chord_sheet_urls):
+    chord_sheets = []
+    weights = []
+    for url in chord_sheet_urls:
+        sheet_data = get_chord_sheet(url)
+        weights.append(sheet_data[0])
+        raw_chord_sheet = sheet_data[1]
+        processed_chord_sheet = music.process_chords(raw_chord_sheet)
+        chord_sheets.append(processed_chord_sheet)
+    return [chord_sheets, weights]
+
 def get_billboard_songs(year, max_num_songs):
-    print_title('BILLBOARD TOP HITS')
+    interface.print_title('BILLBOARD TOP HITS')
     url = 'https://en.wikipedia.org/wiki/Billboard_Year-End_Hot_100_singles_of_' + str(year)
     response = requests.get(url)
     html = response.content
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     results = soup.find('div', attrs={'id':'mw-content-text'}).table
     songs = []
     num = 0
@@ -74,13 +86,13 @@ def get_billboard_songs(year, max_num_songs):
             continue
         title = cells[len(cells) - 2].text.replace('\"','')
         artist = cells[len(cells) - 1].a.text.replace('\"','')
-        print '\"' + title + '\"' + ' by ' + artist + '...',
-        song = make_song(title, artist)
-        if song[2] is None:
+        print '\"' + title + '\" by ' + artist + '...', ### if we change the order here, then we can use str(s)...
+        s = song.Song(title, artist)
+        if len(s.chord_sheets) == 0:
             print 'NOT FOUND'
         else:
             print 'done'
-        songs.append(song)
+        songs.append(s)
         num += 1
         if num >= max_num_songs:
             break
