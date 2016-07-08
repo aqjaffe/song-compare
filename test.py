@@ -8,15 +8,15 @@
 # -finding Geronimo by Sheppard
 
 import song
+import compare
+from userIO import interface
 
 def test():
-    print 'Running test now...'
-    title = 'Geronimo'
-    artist = 'Sheppard'
-    s = song.Song(title, artist)
-    if len(s.chord_sheets) == 0:
-        print 'Song not found in our database.'
-    else:
-        print 'Song found! Yay!'
+    s1 = song.Song('Under Pressure', 'David Bowie')
+    s1.chord_sheets[0] = ['-1', 'a', 'b', 'c', '-1']
+    s2 = song.Song('Under Pressure', 'Queen')
+    s2.chord_sheets[0] = ['-1', 'a', 'b', 'c', '-1']
+    results = compare.run_test_suite(s1, s2, True)
+    interface.print_results(results)
 
 test()
