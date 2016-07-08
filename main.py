@@ -2,9 +2,7 @@
 # --------------
 # This file executes the program.
 
-import interface
-import user_input
-import scrape
+from userIO import interface, user_input, scrape
 import song
 import compare
 import ranking
@@ -32,13 +30,17 @@ def main():
             interface.print_title('BILLBOARD')
             billboard_info = user_input.get_billboard_info()
             billboard_songs = scrape.get_billboard_songs(billboard_info[0], billboard_info[1])            
-            pairs = ranking.get_best_pairs(songs, billboard_info[2])
+            pairs = ranking.get_best_pairs(billboard_songs, billboard_info[2])
             interface.print_ranking(pairs)
         elif feature == 5:
-            print 'Sorry, this feature is not yet implemented.'
+            interface.print_title('SONGS')
+            file_songs = user_input.get_songs_from_file()
+            num_results = user_input.get_num_results()
+            pairs = ranking.get_best_pairs(file_songs, num_results)
+            interface.print_ranking(pairs)
         else:
             print 'ERROR: feature not found'
-        feature = int(user_input.get_feature())
+        feature = user_input.get_feature()
     print 'Thank you for running song-compare.py'
 
 main()
